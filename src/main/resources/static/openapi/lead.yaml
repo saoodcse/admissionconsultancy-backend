@@ -1,0 +1,217 @@
+paths:
+  /api/leads:
+    post:
+      summary: Submit a new lead
+      operationId: submitLead
+      tags:
+        - Lead Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadDTO'
+      responses:
+        '200':
+          description: Successfully submitted the lead
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/leads:
+    get:
+      summary: Get all leads (Admin)
+      operationId: getAllLeads
+      tags:
+        - Lead Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [NEW, CONTACTED, CONVERTED, REJECTED]
+      responses:
+        '200':
+          description: Successfully fetched all leads
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadListResponse'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/leads/{email}/{phone}:
+    get:
+      summary: Get lead by email and phone
+      operationId: getLeadByEmailAndPhone
+      tags:
+        - Lead Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: phone
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched lead details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+    patch:
+      summary: Update lead status and notes
+      operationId: updateLeadStatus
+      tags:
+        - Lead Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: phone
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [NEW, CONTACTED, CONVERTED, REJECTED]
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully updated the lead
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+    delete:
+      summary: Delete a lead
+      operationId: deleteLead
+      tags:
+        - Lead Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: phone
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted the lead
+          content:
+            application/json:
+              example:
+                success: true
+                statuscode: 2000
+                message: "Operation successful"
+                data: null
+                timestamp: "2026-08-09T15:30:00.0000000"
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    LeadDTO:
+      type: object
+      required:
+        - name
+        - email
+        - phone
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string }
+        city: { type: string }
+        message: { type: string }
+        source: { type: string }
+        status: { type: string, enum: [NEW, CONTACTED, CONVERTED, REJECTED] }
+        adminNotes: { type: string }
+        targetIntake: { type: string }
+        preferredBudgetUsd: { type: number, format: double }
+        utmSource: { type: string }
+        utmMedium: { type: string }
+        utmCampaign: { type: string }
+        assignedCounselorEmail: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        country: { $ref: './common.yaml#/components/schemas/CountrySummaryDTO' }
+        university: { $ref: './common.yaml#/components/schemas/UniversitySummaryDTO' }
+        college: { $ref: './common.yaml#/components/schemas/CollegeSummaryDTO' }
+        course: { $ref: './common.yaml#/components/schemas/CourseSummaryDTO' }
+
+    LeadResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/LeadDTO' }
+        timestamp: { type: string, format: date-time }
+
+    LeadListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/LeadDTO' }
+        timestamp: { type: string, format: date-time }

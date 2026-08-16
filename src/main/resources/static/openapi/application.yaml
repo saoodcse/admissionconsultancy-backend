@@ -1,0 +1,42 @@
+paths:
+  /api/applications:
+    post:
+      summary: Submit a new application
+      operationId: submitApplication
+      tags:
+        - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationDTO'
+      responses:
+        '201':
+          description: Application created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDTO'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    ApplicationDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        courseId:
+          type: integer
+          format: int64
+        status:
+          type: string
+          example: "PENDING"

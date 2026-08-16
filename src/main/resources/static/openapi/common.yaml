@@ -1,0 +1,114 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  # ==========================================
+  # REUSABLE SUMMARY SCHEMAS ACROSS ALL FILES
+  # ==========================================
+  schemas:
+    CountrySummaryDTO:
+      type: object
+      properties:
+        name: { type: string }
+        slug: { type: string }
+        flag: { type: string }
+
+    UniversitySummaryDTO:
+      type: object
+      properties:
+        name: { type: string }
+        slug: { type: string }
+        logo: { type: string }
+        countryName: { type: string }
+
+    CourseSummaryDTO:
+      type: object
+      properties:
+        name: { type: string }
+        slug: { type: string }
+        degreeType: { type: string }
+
+    # 🌟 Added CollegeSummaryDTO globally here
+    CollegeSummaryDTO:
+      type: object
+      properties:
+        name: { type: string }
+        slug: { type: string }
+        logo: { type: string }
+        type: { type: string }
+        countryName: { type: string }
+
+  # ==========================================
+  # REUSABLE RESPONSES
+  # ==========================================
+  responses:
+    BadRequest:
+      description: Invalid request or validation error
+      content:
+        application/json:
+          example:
+            success: false
+            statuscode: 4000
+            message: "Invalid request"
+            data:
+              name:
+                - "Name cannot be blank"
+            timestamp: "2026-08-09T12:17:53.5390037"
+
+    Unauthorized:
+      description: Unauthorized - Missing or invalid token
+      content:
+        application/json:
+          example:
+            success: false
+            statuscode: 8003
+            message: "Invalid email or password"
+            data: null
+            timestamp: "2026-08-09T11:49:22.6311958"
+
+    Forbidden:
+      description: Forbidden - Lacks necessary role
+      content:
+        application/json:
+          example:
+            success: false
+            statuscode: 8004
+            message: "You do not have permission to perform this action."
+            data: null
+            timestamp: "2026-08-09T11:49:50.0000000"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          example:
+            success: false
+            statuscode: 4004
+            message: "The requested resource was not found"
+            data: null
+            timestamp: "2026-08-09T11:50:00.0000000"
+
+    Conflict:
+      description: Resource already exists (Duplicate)
+      content:
+        application/json:
+          example:
+            success: false
+            statuscode: 6005
+            message: "A resource with this identifier already exists"
+            data: null
+            timestamp: "2026-08-09T11:50:30.0886685"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          example:
+            success: false
+            statuscode: 5000
+            message: "An unexpected internal error occurred"
+            data: null
+            timestamp: "2026-08-09T12:00:00.0000000"

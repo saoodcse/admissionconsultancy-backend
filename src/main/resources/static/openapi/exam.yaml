@@ -1,0 +1,401 @@
+paths:
+  # ==========================================
+  # PUBLIC ENDPOINTS
+  # ==========================================
+  /api/exams:
+    get:
+      summary: Get all active exams
+      operationId: getActiveExams
+      tags:
+        - Exam Management
+      responses:
+        '200':
+          description: Successfully fetched active exams
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamListResponse'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/exams/{code}:
+    get:
+      summary: Get exam by code
+      operationId: getExamByCode
+      tags:
+        - Exam Management
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched exam details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/countries/{countrySlug}/exams:
+    get:
+      summary: Get all exams and requirements for a specific country
+      operationId: getExamsByCountrySlug
+      tags:
+        - Exam Management
+      parameters:
+        - name: countrySlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched country exam overview
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryExamOverviewResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/exams/{code}/overview:
+    get:
+      summary: Get global applicability and specific rules for a specific exam
+      operationId: getGlobalExamOverview
+      tags:
+        - Exam Management
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched global exam overview
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamGlobalOverviewResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  # ==========================================
+  # PROTECTED ADMIN ENDPOINTS
+  # ==========================================
+  /api/admin/exams:
+    get:
+      summary: Get all exams (Admin view)
+      operationId: getAllExamsAdmin
+      tags:
+        - Exam Management (Admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully fetched all exams
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamListResponse'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new exam
+      operationId: createExam
+      tags:
+        - Exam Management (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExamDTO'
+      responses:
+        '200':
+          description: Successfully created the exam
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/exams/{code}:
+    put:
+      summary: Update an existing exam
+      operationId: updateExam
+      tags:
+        - Exam Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExamDTO'
+      responses:
+        '200':
+          description: Successfully updated the exam
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete an exam
+      operationId: deleteExam
+      tags:
+        - Exam Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted the exam
+          content:
+            application/json:
+              example:
+                success: true
+                statuscode: 2000
+                message: "Operation successful"
+                data: null
+                timestamp: "2026-08-09T14:30:00.0000000"
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/exams/{examCode}/countries/{countrySlug}:
+    post:
+      summary: Map an exam to a country
+      operationId: mapExamToCountry
+      tags:
+        - Exam Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: examCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: countrySlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully mapped exam to country
+          content:
+            application/json:
+              example:
+                success: true
+                statuscode: 2000
+                message: "Operation successful"
+                data: null
+                timestamp: "2026-08-09T14:30:00.0000000"
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/exams/requirements:
+    post:
+      summary: Add an exam requirement rule
+      operationId: addExamRequirement
+      tags:
+        - Exam Management (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExamRequirementDTO'
+      responses:
+        '200':
+          description: Successfully added exam requirement
+          content:
+            application/json:
+              example:
+                success: true
+                statuscode: 2000
+                message: "Operation successful"
+                data: null
+                timestamp: "2026-08-09T14:30:00.0000000"
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+
+components:
+  schemas:
+    ExamDTO:
+      type: object
+      required:
+        - name
+        - code
+      properties:
+        name: { type: string, example: "IELTS" }
+        code: { type: string, example: "IELTS" }
+        description: { type: string, example: "International English Language Testing System" }
+        metaTitle: { type: string }
+        metaDescription: { type: string }
+        keywords: { type: string }
+        ogImage: { type: string }
+        conductingBody: { type: string }
+        examMode: { type: string }
+        scoreValidity: { type: string }
+        officialWebsiteUrl: { type: string }
+        isActive: { type: boolean, example: true }
+
+    RequirementDetailDTO:
+      type: object
+      properties:
+        examName: { type: string }
+        examCode: { type: string }
+        countryName: { type: string }
+        universityName: { type: string, nullable: true }
+        collegeName: { type: string, nullable: true }
+        courseName: { type: string, nullable: true }
+        required: { type: boolean }
+        minimumScore: { type: number, format: double, nullable: true }
+        minimumPercentile: { type: number, format: double, nullable: true }
+
+    CountryExamOverviewDTO:
+      type: object
+      properties:
+        countryName: { type: string, example: "United Kingdom" }
+        countrySlug: { type: string, example: "uk" }
+        applicableExams:
+          type: array
+          items: { $ref: '#/components/schemas/ExamDTO' }
+        requirements:
+          type: array
+          items: { $ref: '#/components/schemas/RequirementDetailDTO' }
+
+    ExamGlobalOverviewDTO:
+      type: object
+      properties:
+        examName: { type: string, example: "IELTS" }
+        examCode: { type: string, example: "IELTS" }
+        description: { type: string }
+        applicableCountries:
+          type: array
+          items: { type: string }
+        globalRequirements:
+          type: array
+          items: { $ref: '#/components/schemas/RequirementDetailDTO' }
+
+    ExamRequirementDTO:
+      type: object
+      properties:
+        examCode: { type: string }
+        countrySlug: { type: string }
+        universitySlug: { type: string, nullable: true }
+        collegeSlug: { type: string, nullable: true }
+        courseSlug: { type: string, nullable: true }
+        required: { type: boolean }
+        minimumScore: { type: number, format: double }
+        minimumPercentile: { type: number, format: double }
+
+    ExamResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/ExamDTO' }
+        timestamp: { type: string, format: date-time }
+
+    ExamListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/ExamDTO' }
+        timestamp: { type: string, format: date-time }
+
+    CountryExamOverviewResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/CountryExamOverviewDTO' }
+        timestamp: { type: string, format: date-time }
+
+    ExamGlobalOverviewResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/ExamGlobalOverviewDTO' }
+        timestamp: { type: string, format: date-time }

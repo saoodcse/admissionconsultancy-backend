@@ -1,0 +1,291 @@
+paths:
+  # PUBLIC ENDPOINTS
+  /api/content:
+    get:
+      summary: Get all active education contents
+      operationId: getActiveContents
+      tags:
+        - Education Content
+      responses:
+        '200':
+          description: Successfully fetched active contents
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationContentListResponse'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/content/category/{category}:
+    get:
+      summary: Get contents by category
+      operationId: getContentsByCategory
+      tags:
+        - Education Content
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched contents by category
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationContentListResponse'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/content/country/{countrySlug}:
+    get:
+      summary: Get contents by country slug
+      operationId: getContentsByCountry
+      tags:
+        - Education Content
+      parameters:
+        - name: countrySlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched contents by country
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationContentListResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/content/university/{universitySlug}:
+    get:
+      summary: Get contents by university slug
+      operationId: getContentsByUniversity
+      tags:
+        - Education Content
+      parameters:
+        - name: universitySlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched contents by university
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationContentListResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/content/course/{courseSlug}:
+    get:
+      summary: Get contents by course slug
+      operationId: getContentsByCourse
+      tags:
+        - Education Content
+      parameters:
+        - name: courseSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched contents by course
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationContentListResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/content/{slug}:
+    get:
+      summary: Get content by URL slug
+      operationId: getContentBySlug
+      tags:
+        - Education Content
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched content item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationContentResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  # PROTECTED ADMIN ENDPOINTS
+  /api/admin/content:
+    post:
+      summary: Create new education content
+      operationId: createContent
+      tags:
+        - Education Content (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationContentDTO'
+      responses:
+        '200':
+          description: Content successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationContentResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/content/{slug}:
+    put:
+      summary: Update existing education content
+      operationId: updateContent
+      tags:
+        - Education Content (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationContentDTO'
+      responses:
+        '200':
+          description: Content successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationContentResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete education content
+      operationId: deleteContent
+      tags:
+        - Education Content (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted education content
+          content:
+            application/json:
+              example:
+                success: true
+                statuscode: 2000
+                message: "Operation successful"
+                data: null
+                timestamp: "2026-08-16T15:30:00.0000000"
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+
+components:
+  schemas:
+    EducationContentDTO:
+      type: object
+      required:
+        - contentType
+        - seoTitle
+        - metaTitle
+        - metaDescription
+        - urlSlug
+        - primaryKeyword
+        - articleContent
+      properties:
+        id: { type: integer, format: int64 }
+        contentType: { type: string, example: "Exam Notification" }
+        seoTitle: { type: string, example: "JEE Main 2026 Session 2 Exam, Registration & Dates" }
+        metaTitle: { type: string, example: "JEE Main 2026 Session 2: Dates, Registration & Updates" }
+        metaDescription: { type: string, example: "Get complete details on JEE Main 2026 Session 2 including registration dates and exam schedule." }
+        urlSlug: { type: string, example: "jee-main-2026-session-2-exam-dates-registration" }
+        primaryKeyword: { type: string, example: "JEE Main 2026 Session 2" }
+        secondaryKeywords: { type: string, example: "JEE Main registration 2026, JEE Main exam dates" }
+        articleContent: { type: string, example: "The National Testing Agency (NTA) administers the Joint Entrance Examination..." }
+        faqs: { type: string, example: "Q: Is there any age restriction? A: No age limit." }
+        category: { type: string, example: "Entrance Exams" }
+        active: { type: boolean, example: true }
+        country: { $ref: './common.yaml#/components/schemas/CountrySummaryDTO' }
+        university: { $ref: './common.yaml#/components/schemas/UniversitySummaryDTO' }
+        course: { $ref: './common.yaml#/components/schemas/CourseSummaryDTO' }
+
+    EducationContentResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/EducationContentDTO' }
+        timestamp: { type: string, format: date-time }
+
+    EducationContentListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/EducationContentDTO' }
+        timestamp: { type: string, format: date-time }

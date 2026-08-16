@@ -1,0 +1,72 @@
+paths:
+  /api/auth/login:
+    post:
+      summary: Authenticate user and generate JWT token
+      operationId: login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDTO'
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+
+components:
+  schemas:
+    LoginRequestDTO:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "admin@admission.com"
+        password:
+          type: string
+          format: password
+          example: "secretpassword"
+
+    AuthResponseDTO:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        name:
+          type: string
+          example: "Admin User"
+        email:
+          type: string
+          example: "admin@admission.com"
+        roles:
+          type: array
+          items:
+            type: string
+            enum: [SUPER_ADMIN, ADMIN, EDITOR, VIEWER]
+          example: ["ADMIN"]
+
+    AuthResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/AuthResponseDTO' }
+        timestamp: { type: string, format: date-time }

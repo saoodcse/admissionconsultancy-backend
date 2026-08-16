@@ -1,0 +1,270 @@
+paths:
+  # PUBLIC ENDPOINTS
+  /api/colleges:
+    get:
+      summary: Get all active colleges
+      operationId: getActiveColleges
+      tags:
+        - College Management
+      responses:
+        '200':
+          description: Successfully fetched active colleges
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollegeListResponse'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/colleges/{slug}:
+    get:
+      summary: Get college by slug
+      operationId: getCollegeBySlug
+      tags:
+        - College Management
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched college details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollegeResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/countries/{countrySlug}/colleges:
+    get:
+      summary: Get colleges by country slug
+      operationId: getCollegesByCountry
+      tags:
+        - College Management
+      parameters:
+        - name: countrySlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched colleges for the given country
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollegeListResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  # PROTECTED ADMIN ENDPOINTS
+  /api/admin/colleges:
+    get:
+      summary: Get all colleges (Admin View)
+      operationId: getAllCollegesAdmin
+      tags:
+        - College Management (Admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully fetched all colleges
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollegeListResponse'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new college
+      operationId: createCollege
+      tags:
+        - College Management (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollegeDTO'
+      responses:
+        '200':
+          description: Successfully created the college
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollegeResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/colleges/{slug}:
+    put:
+      summary: Update an existing college
+      operationId: updateCollege
+      tags:
+        - College Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollegeDTO'
+      responses:
+        '200':
+          description: Successfully updated the college
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollegeResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+    delete:
+      summary: Soft-delete a college
+      operationId: deleteCollege
+      tags:
+        - College Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted the college
+          content:
+            application/json:
+              example:
+                success: true
+                statuscode: 2000
+                message: "Operation successful"
+                data: null
+                timestamp: "2026-08-09T15:30:00.0000000"
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+
+components:
+  schemas:
+    CollegeDTO:
+      type: object
+      required:
+        - name
+        - slug
+      properties:
+        name: { type: string, example: "Medical Faculty Moscow" }
+        slug: { type: string, example: "medical-faculty-moscow" }
+        description: { type: string }
+        established: { type: integer, format: int32, example: 1950 }
+        type: { type: string, example: "Public" }
+        ranking: { type: integer, format: int32, example: 5 }
+        minTuitionFee: { type: number, format: double, example: 300000.0 }
+        maxTuitionFee: { type: number, format: double, example: 600000.0 }
+        feeCurrency: { type: string, example: "INR" }
+        tuitionFeeNative: { type: string }
+        minTuitionUsd: { type: number, format: double }
+        maxTuitionUsd: { type: number, format: double }
+        metaTitle: { type: string }
+        metaDescription: { type: string }
+        keywords: { type: string }
+        ogImage: { type: string }
+        availableIntakes:
+          type: array
+          items:
+            type: string
+        applicationDeadline: { type: string }
+        baselineEligibility: { type: string }
+        hasOnCampusHostel: { type: boolean }
+        hasInternationalMess: { type: boolean }
+        estimatedMonthlyLivingUsd: { type: number, format: double }
+        image: { type: string }
+        logo: { type: string }
+        isActive: { type: boolean, example: true }
+        popularityScore: { type: integer, format: int32 }
+        viewCount: { type: integer, format: int32 }
+        rating: { type: number, format: double, example: 4.9 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+        # String Collections
+        accreditation:
+          type: array
+          items: { type: string }
+        facilities:
+          type: array
+          items: { type: string }
+
+        # Output Summary Relations
+        country: { $ref: './common.yaml#/components/schemas/CountrySummaryDTO' }
+        university: { $ref: './common.yaml#/components/schemas/UniversitySummaryDTO' }
+        offeredCourses:
+          type: array
+          items: { $ref: './common.yaml#/components/schemas/CourseSummaryDTO' }
+
+    CollegeResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/CollegeDTO' }
+        timestamp: { type: string, format: date-time }
+
+    CollegeListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/CollegeDTO' }
+        timestamp: { type: string, format: date-time }

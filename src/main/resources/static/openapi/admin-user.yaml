@@ -1,0 +1,162 @@
+paths:
+  /api/admin/users:
+    post:
+      summary: Create a new system user (Admin/Editor/Viewer)
+      operationId: createUser
+      tags:
+        - Admin User Management
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequestDTO'
+      responses:
+        '200':
+          description: Successfully created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+    get:
+      summary: Get all active system users
+      operationId: getAllUsers
+      tags:
+        - Admin User Management
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully fetched all users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/users/{email}:
+    get:
+      summary: Get system user by email
+      operationId: getUserByEmail
+      tags:
+        - Admin User Management
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete system user by email
+      operationId: deleteUser
+      tags:
+        - Admin User Management
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted user
+          content:
+            application/json:
+              example:
+                success: true
+                statuscode: 2000
+                message: "Operation successful"
+                data: null
+                timestamp: "2026-08-09T15:30:00.0000000"
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+
+components:
+  schemas:
+    CreateUserRequestDTO:
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - roles
+      properties:
+        name: { type: string, example: "Jane Doe" }
+        email: { type: string, format: email, example: "jane@admission.com" }
+        password: { type: string, format: password, example: "securePassword123" }
+        roles:
+          type: array
+          items:
+            type: string
+            enum: [SUPER_ADMIN, ADMIN, EDITOR, VIEWER]
+          example: ["EDITOR"]
+
+    UserResponseDTO:
+      type: object
+      properties:
+        name: { type: string, example: "Jane Doe" }
+        email: { type: string, example: "jane@admission.com" }
+        roles:
+          type: array
+          items:
+            type: string
+            enum: [SUPER_ADMIN, ADMIN, EDITOR, VIEWER]
+          example: ["EDITOR"]
+        isActive: { type: boolean, example: true }
+
+    UserResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/UserResponseDTO' }
+        timestamp: { type: string, format: date-time }
+
+    UserListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/UserResponseDTO' }
+        timestamp: { type: string, format: date-time }

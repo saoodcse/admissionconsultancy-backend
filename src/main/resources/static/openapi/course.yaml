@@ -1,0 +1,248 @@
+paths:
+  # PUBLIC ENDPOINTS
+  /api/courses:
+    get:
+      summary: Get all active courses
+      operationId: getActiveCourses
+      tags:
+        - Course Management
+      responses:
+        '200':
+          description: Successfully fetched active courses (AppCode 2007)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseListResponse'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/courses/{slug}:
+    get:
+      summary: Get course by slug
+      operationId: getCourseBySlug
+      tags:
+        - Course Management
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched course details (AppCode 2007)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  # PROTECTED ADMIN ENDPOINTS
+  /api/admin/courses/all:
+    get:
+      summary: Get all courses (Admin View)
+      operationId: getAllCoursesAdmin
+      tags:
+        - Course Management (Admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully fetched all courses (AppCode 2007)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseListResponse'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/courses:
+    post:
+      summary: Create a new course
+      operationId: createCourse
+      tags:
+        - Course Management (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseDTO'
+      responses:
+        '200':
+          description: Successfully created the course (AppCode 2008)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/courses/{slug}:
+    put:
+      summary: Update an existing course
+      operationId: updateCourse
+      tags:
+        - Course Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseDTO'
+      responses:
+        '200':
+          description: Successfully updated the course (AppCode 2009)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+    delete:
+      summary: Soft-delete a course
+      operationId: deleteCourse
+      tags:
+        - Course Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted the course (AppCode 2010)
+          content:
+            application/json:
+              example:
+                success: true
+                statuscode: 2010
+                message: "Course deleted successfully"
+                data: null
+                timestamp: "2026-08-09T15:10:00.0000000"
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+
+components:
+  schemas:
+    CourseDTO:
+      type: object
+      required:
+        - name
+        - slug
+      properties:
+        name: { type: string, example: "MBBS" }
+        slug: { type: string, example: "mbbs" }
+        fullName: { type: string, example: "Bachelor of Medicine and Bachelor of Surgery" }
+        description: { type: string }
+        duration: { type: string, example: "5+1 Years" }
+        degreeType: { type: string, example: "Undergraduate" }
+        studyLevel: { type: string, example: "UG" }
+        field: { type: string, example: "Medical" }
+        eligibility: { type: string, example: "50% in PCB + NEET Qualified" }
+        minTuitionFee: { type: number, format: double, example: 250000.0 }
+        maxTuitionFee: { type: number, format: double, example: 500000.0 }
+        feeCurrency: { type: string, example: "INR" }
+        tuitionFeeNative: { type: string }
+        minTuitionUsd: { type: number, format: double }
+        maxTuitionUsd: { type: number, format: double }
+        metaTitle: { type: string }
+        metaDescription: { type: string }
+        keywords: { type: string }
+        ogImage: { type: string }
+        availableIntakes:
+          type: array
+          items:
+            type: string
+        applicationDeadline: { type: string }
+        requiredExams:
+          type: array
+          items:
+            type: string
+        image: { type: string }
+        isActive: { type: boolean, example: true }
+        popularityScore: { type: integer, format: int32 }
+        viewCount: { type: integer, format: int32 }
+        rating: { type: number, format: double, example: 4.8 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+        # Primitive Collections
+        subjects:
+          type: array
+          items: { type: string }
+        careerProspects:
+          type: array
+          items: { type: string }
+
+        # Output Relationship
+
+        universities:
+          type: array
+          items: { $ref: './common.yaml#/components/schemas/UniversitySummaryDTO' }
+
+    CourseResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2007 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/CourseDTO' }
+        timestamp: { type: string, format: date-time }
+
+    CourseListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2007 }
+        message: { type: string, example: "Operation successful" }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/CourseDTO' }
+        timestamp: { type: string, format: date-time }

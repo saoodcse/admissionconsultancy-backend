@@ -1,0 +1,181 @@
+openapi: 3.0.3
+
+info:
+  title: Admission Consultancy API
+  description: Comprehensive APIs for managing countries, universities, exams, and admissions.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local Development Server
+
+# Pull the security scheme from common.yaml so it appears globally in Swagger UI
+components:
+  securitySchemes:
+    bearerAuth:
+      $ref: './common.yaml#/components/securitySchemes/bearerAuth'
+
+
+
+paths:
+  # COUNTRY MANAGEMENT
+
+  /api/countries:
+    $ref: './country.yaml#/paths/~1api~1countries'
+
+  /api/countries/{slug}:
+    $ref: './country.yaml#/paths/~1api~1countries~1{slug}'
+
+  /api/admin/countries/all:
+    $ref: './country.yaml#/paths/~1api~1admin~1countries~1all'
+
+  /api/admin/countries:
+    $ref: './country.yaml#/paths/~1api~1admin~1countries'
+
+  /api/admin/countries/{slug}:
+    $ref: './country.yaml#/paths/~1api~1admin~1countries~1{slug}'
+
+
+  # UNIVERSITY MANAGEMENT
+  /api/universities:
+    $ref: './university.yaml#/paths/~1api~1universities'
+
+  /api/universities/{slug}:
+    $ref: './university.yaml#/paths/~1api~1universities~1{slug}'
+
+  /api/universities/country/{countrySlug}:
+    $ref: './university.yaml#/paths/~1api~1universities~1country~1{countrySlug}'
+
+  /api/admin/universities/all:
+    $ref: './university.yaml#/paths/~1api~1admin~1universities~1all'
+
+  /api/admin/universities:
+    $ref: './university.yaml#/paths/~1api~1admin~1universities'
+
+  /api/admin/universities/{slug}:
+    $ref: './university.yaml#/paths/~1api~1admin~1universities~1{slug}'
+
+  # EXPLORE MODULE
+
+  /api/explore/countries:
+    $ref: './explore.yaml#/paths/~1api~1explore~1countries'
+
+  /api/explore/countries/{slug}:
+    $ref: './explore.yaml#/paths/~1api~1explore~1countries~1{slug}'
+
+  /api/explore/search:
+    $ref: './explore.yaml#/paths/~1api~1explore~1search'
+
+
+  # EXAM MANAGEMENT
+  /api/exams:
+    $ref: './exam.yaml#/paths/~1api~1exams'
+
+  /api/exams/{code}:
+    $ref: './exam.yaml#/paths/~1api~1exams~1{code}'
+
+  /api/countries/{countrySlug}/exams:
+    $ref: './exam.yaml#/paths/~1api~1countries~1{countrySlug}~1exams'
+
+  /api/exams/{code}/overview:
+    $ref: './exam.yaml#/paths/~1api~1exams~1{code}~1overview'
+
+  /api/admin/exams:
+    $ref: './exam.yaml#/paths/~1api~1admin~1exams'
+
+  /api/admin/exams/{code}:
+    $ref: './exam.yaml#/paths/~1api~1admin~1exams~1{code}'
+
+  /api/admin/exams/{examCode}/countries/{countrySlug}:
+    $ref: './exam.yaml#/paths/~1api~1admin~1exams~1{examCode}~1countries~1{countrySlug}'
+
+  /api/admin/exams/requirements:
+    $ref: './exam.yaml#/paths/~1api~1admin~1exams~1requirements'
+
+  # COURSE MANAGEMENT
+  /api/courses:
+    $ref: './course.yaml#/paths/~1api~1courses'
+
+  /api/courses/{slug}:
+    $ref: './course.yaml#/paths/~1api~1courses~1{slug}'
+
+  /api/admin/courses/all:
+    $ref: './course.yaml#/paths/~1api~1admin~1courses~1all'
+
+  /api/admin/courses:
+    $ref: './course.yaml#/paths/~1api~1admin~1courses'
+
+  /api/admin/courses/{slug}:
+    $ref: './course.yaml#/paths/~1api~1admin~1courses~1{slug}'
+
+
+  # AUTHENTICATION
+  /api/auth/login:
+    $ref: './auth.yaml#/paths/~1api~1auth~1login'
+
+
+  # COLLEGE MANAGEMENT
+  /api/colleges:
+    $ref: './college.yaml#/paths/~1api~1colleges'
+
+  /api/colleges/{slug}:
+    $ref: './college.yaml#/paths/~1api~1colleges~1{slug}'
+
+  /api/countries/{countrySlug}/colleges:
+    $ref: './college.yaml#/paths/~1api~1countries~1{countrySlug}~1colleges'
+
+  /api/admin/colleges:
+    $ref: './college.yaml#/paths/~1api~1admin~1colleges'
+
+  /api/admin/colleges/{slug}:
+    $ref: './college.yaml#/paths/~1api~1admin~1colleges~1{slug}'
+
+  # ADMIN USER MANAGEMENT
+  /api/admin/users:
+    $ref: './admin-user.yaml#/paths/~1api~1admin~1users'
+
+  /api/admin/users/{email}:
+    $ref: './admin-user.yaml#/paths/~1api~1admin~1users~1{email}'
+    
+  # LEAD MANAGEMENT
+  /api/leads:
+    $ref: './lead.yaml#/paths/~1api~1leads'
+
+  /api/admin/leads:
+    $ref: './lead.yaml#/paths/~1api~1admin~1leads'
+    
+  /api/admin/leads/{email}/{phone}:
+    $ref: './lead.yaml#/paths/~1api~1admin~1leads~1{email}~1{phone}'
+
+  # EDUCATION CONTENT MODULE
+  /api/content:
+    $ref: './education-content.yaml#/paths/~1api~1content'
+
+  /api/content/category/{category}:
+    $ref: './education-content.yaml#/paths/~1api~1content~1category~1{category}'
+
+  /api/content/country/{countrySlug}:
+    $ref: './education-content.yaml#/paths/~1api~1content~1country~1{countrySlug}'
+
+  /api/content/university/{universitySlug}:
+    $ref: './education-content.yaml#/paths/~1api~1content~1university~1{universitySlug}'
+
+  /api/content/course/{courseSlug}:
+    $ref: './education-content.yaml#/paths/~1api~1content~1course~1{courseSlug}'
+
+  /api/content/{slug}:
+    $ref: './education-content.yaml#/paths/~1api~1content~1{slug}'
+
+  /api/admin/content:
+    $ref: './education-content.yaml#/paths/~1api~1admin~1content'
+
+  /api/admin/content/{slug}:
+    $ref: './education-content.yaml#/paths/~1api~1admin~1content~1{slug}'
+
+  # WISHLIST MANAGEMENT
+  /api/wishlist:
+    $ref: './wishlist.yaml#/paths/~1api~1wishlist'
+
+  # APPLICATION MANAGEMENT
+    /api/applications:
+      $ref: './application.yaml#/paths/~1api~1applications'

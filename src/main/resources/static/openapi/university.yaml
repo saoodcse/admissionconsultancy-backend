@@ -1,0 +1,299 @@
+paths:
+  # PUBLIC ENDPOINTS
+  /api/universities:
+    get:
+      summary: Get all active universities
+      operationId: getActiveUniversities
+      tags:
+        - University Management
+      responses:
+        '200':
+          description: Successfully fetched active universities (AppCode 2000)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniversityListResponse'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/universities/{slug}:
+    get:
+      summary: Get university by slug
+      operationId: getUniversityBySlug
+      tags:
+        - University Management
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched university details (AppCode 2000)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniversityResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/universities/country/{countrySlug}:
+    get:
+      summary: Get universities by country slug
+      operationId: getUniversitiesByCountry
+      tags:
+        - University Management
+      parameters:
+        - name: countrySlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched universities for the given country (AppCode 2000)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniversityListResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  # PROTECTED ADMIN ENDPOINTS
+  /api/admin/universities/all:
+    get:
+      summary: Get all universities (Admin)
+      operationId: getAllUniversitiesAdmin
+      tags:
+        - University Management (Admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully fetched all universities (AppCode 2000)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniversityListResponse'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/universities/{slug}:
+    put:
+      summary: Update an existing university
+      operationId: updateUniversity
+      tags:
+        - University Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UniversityDTO'
+      responses:
+        '200':
+          description: Successfully updated the university (AppCode 2002)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniversityResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+    delete:
+      summary: Soft-delete a university
+      operationId: deleteUniversity
+      tags:
+        - University Management (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted the university (AppCode 2003)
+          content:
+            application/json:
+              example:
+                success: true
+                statuscode: 2003
+                message: "Resource deleted successfully"
+                data: null
+                timestamp: "2026-08-09T12:20:00.0000000"
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/admin/universities:
+    post:
+      summary: Create a new university
+      operationId: createUniversity
+      tags:
+        - University Management (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UniversityDTO'
+      responses:
+        '201':
+          description: Successfully created the university (AppCode 2001)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniversityResponse'
+        '400':
+          $ref: './common.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: './common.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: './common.yaml#/components/responses/Forbidden'
+        '409':
+          $ref: './common.yaml#/components/responses/Conflict'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+
+components:
+  schemas:
+    # NESTED DTO SCHEMAS
+    CountrySummaryDTO:
+      type: object
+      properties:
+        name: { type: string }
+        slug: { type: string }
+        flag: { type: string }
+
+    CollegeSummaryDTO:
+      type: object
+      properties:
+        name: { type: string }
+        slug: { type: string }
+        logo: { type: string }
+        type: { type: string }
+        countryName: { type: string }
+
+    CourseSummaryDTO:
+      type: object
+      properties:
+        name: { type: string }
+        slug: { type: string }
+        degreeType: { type: string }
+
+    # MASTER UNIVERSITY DTO
+    UniversityDTO:
+      type: object
+      required:
+        - name
+        - slug
+      properties:
+        name: { type: string }
+        slug: { type: string }
+        description: { type: string }
+        established: { type: integer, format: int32 }
+        type: { type: string }
+        ranking: { type: integer, format: int32 }
+        minTuitionFee: { type: number, format: double }
+        maxTuitionFee: { type: number, format: double }
+        feeCurrency: { type: string }
+        tuitionFeeNative: { type: string }
+        minTuitionUsd: { type: number, format: double }
+        maxTuitionUsd: { type: number, format: double }
+        metaTitle: { type: string }
+        metaDescription: { type: string }
+        keywords: { type: string }
+        ogImage: { type: string }
+        availableIntakes:
+          type: array
+          items:
+            type: string
+        applicationDeadline: { type: string }
+        baselineEligibility: { type: string }
+        hasOnCampusHostel: { type: boolean }
+        hasInternationalMess: { type: boolean }
+        estimatedMonthlyLivingUsd: { type: number, format: double }
+        image: { type: string }
+        logo: { type: string }
+        isActive: { type: boolean }
+        popularityScore: { type: integer, format: int32 }
+        viewCount: { type: integer, format: int32 }
+        rating: { type: number, format: double }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+        # String Lists
+        accreditation:
+          type: array
+          items: { type: string }
+        facilities:
+          type: array
+          items: { type: string }
+
+        # Output relationships (For GET)
+        country: { $ref: '#/components/schemas/CountrySummaryDTO' }
+        colleges:
+          type: array
+          items: { $ref: '#/components/schemas/CollegeSummaryDTO' }
+        offeredCourses:
+          type: array
+          items: { $ref: '#/components/schemas/CourseSummaryDTO' }
+
+    # API RESPONSE WRAPPERS
+    UniversityResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/UniversityDTO' }
+        timestamp: { type: string, format: date-time }
+
+    UniversityListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/UniversityDTO' }
+        timestamp: { type: string, format: date-time }

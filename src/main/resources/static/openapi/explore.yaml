@@ -1,0 +1,111 @@
+paths:
+  /api/explore/countries:
+    get:
+      summary: Get all explore countries with related data
+      operationId: getAllExploreCountries
+      tags:
+        - Explore Module
+      responses:
+        '200':
+          description: Successfully fetched explore countries list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExploreCountryListResponse'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/explore/countries/{slug}:
+    get:
+      summary: Get explore country data by slug
+      operationId: getExploreCountryBySlug
+      tags:
+        - Explore Module
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetched explore country details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExploreCountryResponse'
+        '404':
+          $ref: './common.yaml#/components/responses/NotFound'
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+  /api/explore/search:
+    get:
+      summary: Global search across countries, universities, and courses
+      operationId: globalSearch
+      tags:
+        - Explore Module
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+            default: ""
+          description: Search keyword query string
+      responses:
+        '200':
+          description: Successfully fetched global search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  statuscode: { type: integer, example: 2000 }
+                  message: { type: string, example: "Operation successful" }
+                  data:
+                    type: object
+                    description: Dynamic map of search results
+                    additionalProperties: true
+                  timestamp: { type: string, format: date-time }
+        '500':
+          $ref: './common.yaml#/components/responses/InternalServerError'
+
+
+components:
+  schemas:
+    ExploreCountryDTO:
+      type: object
+      properties:
+        country: { $ref: './country.yaml#/components/schemas/CountryDTO' }
+        universities:
+          type: array
+          items: { $ref: './common.yaml#/components/schemas/UniversitySummaryDTO' }
+        courses:
+          type: array
+          items: { $ref: './common.yaml#/components/schemas/CourseSummaryDTO' }
+        colleges:
+          type: array
+          items: { $ref: './common.yaml#/components/schemas/CollegeSummaryDTO' }
+
+
+    ExploreCountryResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data: { $ref: '#/components/schemas/ExploreCountryDTO' }
+        timestamp: { type: string, format: date-time }
+
+    ExploreCountryListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        statuscode: { type: integer, example: 2000 }
+        message: { type: string, example: "Operation successful" }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/ExploreCountryDTO' }
+        timestamp: { type: string, format: date-time }

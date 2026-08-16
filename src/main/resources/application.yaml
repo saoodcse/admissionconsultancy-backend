@@ -1,0 +1,63 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: admissionconsultancy
+  datasource:
+    url: jdbc:mysql://localhost:3306/admission_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: root
+    password: root#1234
+    hikari:
+      pool-name: AdmissionHikariPool # Required to enable DB connection pool metrics
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update # In actual production, change this to 'validate' and use Flyway/Liquibase
+    show-sql: true # Set to true if you want to debug SQL queries
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+# Proper Logger Configurationx
+logging:
+  level:
+    root: INFO
+    com.admissionconsultancy: DEBUG # Shows your custom log.debug() and log.info() messages
+    org.springframework.security: WARN
+    org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
+
+
+# Rate Limiting Configuration
+app:
+  ratelimit:
+    max-capacity: 20        # Maximum burst size (tokens a bucket can hold)
+    refill-tokens: 20         # How many tokens to add every refill period
+    refill-period-minutes: 1  # Time duration of the refill period in minutes
+    cache-max-size: 100000    # Max unique IPs to track simultaneously in RAM
+    cache-expire-minutes: 5   # Evict buckets after X minutes of inactivity
+
+
+springdoc:
+  api-docs:
+    enabled: true # Disables auto-generating JSON from Java code
+  swagger-ui:
+    url: /openapi/openapi.yaml # Points Swagger UI to your static YAML file
+
+# Actuator & Micrometer Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        # Only expose safe endpoints to the web. NEVER expose 'env' or 'beans' in production.
+        include: health, prometheus, info
+  endpoint:
+    health:
+      show-details: always # Shows DB and Disk space health
+  metrics:
+    tags:
+      application: ${spring.application.name} # Global tag for all metrics
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true # Enables latency histograms (P95, P99) for APIs
