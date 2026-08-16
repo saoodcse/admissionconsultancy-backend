@@ -169,19 +169,18 @@ class CourseServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should soft delete course successfully, increment counter, and record timer")
+    @DisplayName("Should soft delete course successfully, increment counter")
     void testDeleteCourse_Success() {
         when(courseRepository.findBySlug("mbbs")).thenReturn(Optional.of(courseEntity));
-        when(courseRepository.save(any(Course.class))).thenReturn(courseEntity);
 
         courseService.deleteCourse("mbbs");
 
-        ArgumentCaptor<Course> captor = ArgumentCaptor.forClass(Course.class);
-        verify(courseRepository, times(1)).save(captor.capture());
-        assertThat(captor.getValue().isActive()).isFalse();
+        // Assert that the entity's active status was set to false via dirty checking
+        assertThat(courseEntity.isActive()).isFalse();
 
+        // Verify counter increment
         assertThat(meterRegistry.get("business.course.deleted.total").counter().count()).isEqualTo(1.0);
-        assertThat(meterRegistry.get("db.query.course.save.time").timer().count()).isEqualTo(1);
+        verify(courseRepository, times(1)).findBySlug("mbbs");
     }
 
     @Test
