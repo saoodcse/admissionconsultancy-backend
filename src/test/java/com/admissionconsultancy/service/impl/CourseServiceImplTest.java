@@ -5,6 +5,7 @@ import com.admissionconsultancy.entity.Course;
 import com.admissionconsultancy.exception.DuplicateResourceException;
 import com.admissionconsultancy.exception.ResourceNotFoundException;
 import com.admissionconsultancy.mapper.CourseMapper;
+import com.admissionconsultancy.repository.CollegeRepository;
 import com.admissionconsultancy.repository.CourseRepository;
 import com.admissionconsultancy.repository.UniversityRepository;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -32,10 +32,13 @@ class CourseServiceImplTest {
     private CourseRepository courseRepository;
 
     @Mock
-    private CourseMapper courseMapper;
+    private UniversityRepository universityRepository;
 
     @Mock
-    UniversityRepository universityRepository;
+    private CollegeRepository collegeRepository;
+
+    @Mock
+    private CourseMapper courseMapper;
 
     private MeterRegistry meterRegistry;
     private CourseServiceImpl courseService;
@@ -46,7 +49,8 @@ class CourseServiceImplTest {
     @BeforeEach
     void setUp() {
         meterRegistry = new SimpleMeterRegistry();
-        courseService = new CourseServiceImpl(courseRepository, universityRepository, courseMapper, meterRegistry);
+        // 🌟 Pass collegeRepository into the constructor
+        courseService = new CourseServiceImpl(courseRepository, universityRepository, collegeRepository, courseMapper, meterRegistry);
 
         courseEntity = new Course();
         courseEntity.setName("MBBS");

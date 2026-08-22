@@ -15,4 +15,5 @@ public interface CollegeRepository extends JpaRepository<College, Long> {
     List<College> findByCountrySlugAndIsActiveTrue(String countrySlug);
     boolean existsBySlug(String slug);
     List<College> findByNameContainingIgnoreCaseAndIsActiveTrue(String query);
+    List<College> findAllBySlugIn(List<String> slugs);
 }

@@ -1,13 +1,16 @@
 package com.admissionconsultancy.service.impl;
 
 import com.admissionconsultancy.constants.AppCode;
+import com.admissionconsultancy.dto.CollegeSummaryDTO;
 import com.admissionconsultancy.dto.CourseDTO;
 import com.admissionconsultancy.dto.UniversitySummaryDTO;
+import com.admissionconsultancy.entity.College;
 import com.admissionconsultancy.entity.Course;
 import com.admissionconsultancy.entity.University;
 import com.admissionconsultancy.exception.DuplicateResourceException;
 import com.admissionconsultancy.exception.ResourceNotFoundException;
 import com.admissionconsultancy.mapper.CourseMapper;
+import com.admissionconsultancy.repository.CollegeRepository;
 import com.admissionconsultancy.repository.CourseRepository;
 import com.admissionconsultancy.repository.UniversityRepository;
 import com.admissionconsultancy.service.CourseService;
@@ -27,6 +30,7 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final UniversityRepository universityRepository;
+    private final CollegeRepository collegeRepository;
     private final CourseMapper courseMapper;
 
     // Counters for Business Operations
@@ -41,12 +45,15 @@ public class CourseServiceImpl implements CourseService {
     private final Timer saveDbQueryTimer;
 
     public CourseServiceImpl(
-            CourseRepository courseRepository, UniversityRepository universityRepository,
+            CourseRepository courseRepository,
+            UniversityRepository universityRepository,
+            CollegeRepository collegeRepository,
             CourseMapper courseMapper,
             MeterRegistry meterRegistry) {
 
         this.courseRepository = courseRepository;
         this.universityRepository = universityRepository;
+        this.collegeRepository = collegeRepository;
         this.courseMapper = courseMapper;
 
         // Initialize Counters (Business Metrics)
@@ -131,7 +138,7 @@ public class CourseServiceImpl implements CourseService {
         courseMapper.updateEntityFromDTO(courseDTO, courseEntity);
         courseEntity.setActive(true);
 
-        //  Bidirectional synchronization for Many-to-Many relationship
+        // Bidirectional synchronization for Universities
         if (courseDTO.getUniversities() != null && !courseDTO.getUniversities().isEmpty()) {
             List<String> universitySlugs = courseDTO.getUniversities().stream()
                     .map(UniversitySummaryDTO::getSlug)
@@ -141,6 +148,19 @@ public class CourseServiceImpl implements CourseService {
             for (University uni : universities) {
                 uni.getOfferedCourses().add(courseEntity);
                 courseEntity.getUniversities().add(uni);
+            }
+        }
+
+        // Bidirectional synchronization for Colleges
+        if (courseDTO.getColleges() != null && !courseDTO.getColleges().isEmpty()) {
+            List<String> collegeSlugs = courseDTO.getColleges().stream()
+                    .map(CollegeSummaryDTO::getSlug)
+                    .collect(Collectors.toList());
+
+            List<College> colleges = collegeRepository.findAllBySlugIn(collegeSlugs);
+            for (College college : colleges) {
+                college.getOfferedCourses().add(courseEntity);
+                courseEntity.getColleges().add(college);
             }
         }
 
@@ -164,7 +184,7 @@ public class CourseServiceImpl implements CourseService {
 
         courseMapper.updateEntityFromDTO(courseDTO, existingCourse);
 
-        //  Clear old associations and sync new ones bidirectionally
+        // Clear old university associations and sync new ones bidirectionally
         if (courseDTO.getUniversities() != null) {
             for (University oldUni : existingCourse.getUniversities()) {
                 oldUni.getOfferedCourses().remove(existingCourse);
@@ -182,14 +202,30 @@ public class CourseServiceImpl implements CourseService {
             }
         }
 
+        // Clear old college associations and sync new ones bidirectionally
+        if (courseDTO.getColleges() != null) {
+            for (College oldCollege : existingCourse.getColleges()) {
+                oldCollege.getOfferedCourses().remove(existingCourse);
+            }
+            existingCourse.getColleges().clear();
+
+            List<String> collegeSlugs = courseDTO.getColleges().stream()
+                    .map(CollegeSummaryDTO::getSlug)
+                    .collect(Collectors.toList());
+
+            List<College> newColleges = collegeRepository.findAllBySlugIn(collegeSlugs);
+            for (College college : newColleges) {
+                college.getOfferedCourses().add(existingCourse);
+                existingCourse.getColleges().add(college);
+            }
+        }
+
         Course savedCourse = saveDbQueryTimer.record(() -> courseRepository.save(existingCourse));
         log.info("Successfully updated course with slug: {}", slug);
         courseUpdatedCounter.increment();
 
         return courseMapper.toDTO(savedCourse);
     }
-
-
 
     @Override
     @Transactional

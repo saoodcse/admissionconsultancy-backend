@@ -92,6 +92,13 @@ public class Course {
     @EqualsAndHashCode.Exclude
     private List<University> universities = new ArrayList<>();
 
+    // RELATIONAL LINK TO COLLEGES (Many-to-Many)
+    @ManyToMany(mappedBy = "offeredCourses", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<College> colleges = new ArrayList<>();
+
     // PRIMITIVE COLLECTIONS
     @ElementCollection
     @CollectionTable(name = "course_subjects", joinColumns = @JoinColumn(name = "course_id"))

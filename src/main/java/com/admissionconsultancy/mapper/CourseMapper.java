@@ -1,5 +1,6 @@
 package com.admissionconsultancy.mapper;
 
+import com.admissionconsultancy.dto.CollegeSummaryDTO;
 import com.admissionconsultancy.dto.CourseDTO;
 import com.admissionconsultancy.dto.UniversitySummaryDTO;
 import com.admissionconsultancy.entity.Course;
@@ -70,6 +71,20 @@ public class CourseMapper {
                 summary.setLogo(uni.getLogo());
                 if (uni.getCountry() != null) {
                     summary.setCountryName(uni.getCountry().getName());
+                }
+                return summary;
+            }).collect(Collectors.toList()));
+        }
+
+        // Map Colleges to CollegeSummaryDTO list
+        if (entity.getColleges() != null) {
+            dto.setColleges(entity.getColleges().stream().map(college -> {
+                CollegeSummaryDTO summary = new CollegeSummaryDTO();
+                summary.setName(college.getName());
+                summary.setSlug(college.getSlug());
+                summary.setLogo(college.getLogo());
+                if (college.getCountry() != null) {
+                    summary.setCountryName(college.getCountry().getName());
                 }
                 return summary;
             }).collect(Collectors.toList()));

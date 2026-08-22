@@ -56,6 +56,9 @@ public class CourseDTO {
     private List<String> subjects;
     private List<String> careerProspects;
 
+    // Output field for colleges offering this course
+    private List<CollegeSummaryDTO> colleges;
+
     // Output field (Universities offering this course)
     private List<UniversitySummaryDTO> universities;
 }
