@@ -1,7 +1,7 @@
 package com.admissionconsultancy.controller.impl;
 
 import com.admissionconsultancy.constants.AppCode;
-import com.admissionconsultancy.controller.CourseControllerApi;
+import com.admissionconsultancy.controller.CourseController;
 import com.admissionconsultancy.dto.ApiResponse;
 import com.admissionconsultancy.dto.CourseDTO;
 import com.admissionconsultancy.service.CourseService;
@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class CourseController implements CourseControllerApi {
+public class CourseControllerImpl implements CourseController {
 
     private final CourseService courseService;
 

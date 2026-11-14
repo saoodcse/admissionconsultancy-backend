@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("/api")
-public interface UniversityControllerApi {
+public interface UniversityController {
 
     // PUBLIC ENDPOINTS (No Authentication Required)
 

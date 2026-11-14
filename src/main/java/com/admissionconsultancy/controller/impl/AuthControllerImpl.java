@@ -1,7 +1,7 @@
 package com.admissionconsultancy.controller.impl;
 
 import com.admissionconsultancy.constants.AppCode;
-import com.admissionconsultancy.controller.AuthControllerApi;
+import com.admissionconsultancy.controller.AuthController;
 import com.admissionconsultancy.dto.ApiResponse;
 import com.admissionconsultancy.dto.AuthResponseDTO;
 import com.admissionconsultancy.dto.LoginRequestDTO;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class AuthController implements AuthControllerApi {
+public class AuthControllerImpl implements AuthController {
 
     private final AuthService authService;
 

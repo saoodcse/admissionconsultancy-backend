@@ -1,7 +1,7 @@
 package com.admissionconsultancy.controller.impl;
 
 import com.admissionconsultancy.constants.AppCode;
-import com.admissionconsultancy.controller.AdminUserControllerApi;
+import com.admissionconsultancy.controller.AdminUserController;
 import com.admissionconsultancy.dto.ApiResponse;
 import com.admissionconsultancy.dto.CreateUserRequestDTO;
 import com.admissionconsultancy.dto.UserResponseDTO;
@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class AdminUserController implements AdminUserControllerApi {
+public class AdminUserControllerImpl implements AdminUserController {
 
     private final AdminUserService adminUserService;
 

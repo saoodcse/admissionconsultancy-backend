@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("/api")
-public interface CountryControllerApi {
+public interface CountryController {
 
     @GetMapping("/countries")
     ResponseEntity<ApiResponse<List<CountryDTO>>> getActiveCountries();

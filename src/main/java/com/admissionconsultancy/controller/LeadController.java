@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("/api")
-public interface LeadControllerApi {
+public interface LeadController {
 
     // PUBLIC ENDPOINTS (Website forms)
 

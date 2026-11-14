@@ -1,7 +1,7 @@
 package com.admissionconsultancy.controller.impl;
 
 import com.admissionconsultancy.constants.AppCode;
-import com.admissionconsultancy.controller.ExamControllerApi;
+import com.admissionconsultancy.controller.ExamController;
 import com.admissionconsultancy.dto.*;
 import com.admissionconsultancy.service.ExamService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class ExamController implements ExamControllerApi {
+public class ExamControllerImpl implements ExamController {
 
     private final ExamService examService;
 

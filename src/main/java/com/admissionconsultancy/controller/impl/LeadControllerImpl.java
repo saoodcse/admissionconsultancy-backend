@@ -1,7 +1,7 @@
 package com.admissionconsultancy.controller.impl;
 
 import com.admissionconsultancy.constants.AppCode;
-import com.admissionconsultancy.controller.LeadControllerApi;
+import com.admissionconsultancy.controller.LeadController;
 import com.admissionconsultancy.dto.ApiResponse;
 import com.admissionconsultancy.dto.LeadDTO;
 import com.admissionconsultancy.enums.LeadStatus;
@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class LeadController implements LeadControllerApi {
+public class LeadControllerImpl implements LeadController {
 
     private final LeadService leadService;
 

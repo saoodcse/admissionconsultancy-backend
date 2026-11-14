@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/api/explore")
-public interface ExploreControllerApi {
+public interface ExploreController {
 
     @GetMapping("/countries")
     ResponseEntity<ApiResponse<List<ExploreCountryDTO>>> getAllExploreCountries();

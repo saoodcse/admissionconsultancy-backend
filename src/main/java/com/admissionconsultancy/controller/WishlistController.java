@@ -10,7 +10,7 @@ import java.util.List;
 
 @Tag(name = "Wishlist Management", description = "APIs for managing user wishlists")
 @RequestMapping("/api/wishlist")
-public interface WishlistControllerApi {
+public interface WishlistController {
 
     @GetMapping
     ResponseEntity<List<WishlistDTO>> getUserWishlist();

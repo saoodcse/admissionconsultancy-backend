@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "Application Management", description = "APIs for managing applications")
 @RequestMapping("/api/applications")
-public interface ApplicationControllerApi {
+public interface ApplicationController {
 
     @PostMapping
     ResponseEntity<Void> submitApplication(@RequestBody ApplicationDTO applicationDTO);

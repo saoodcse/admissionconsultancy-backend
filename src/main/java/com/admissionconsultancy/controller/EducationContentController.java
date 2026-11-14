@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("/api")
-public interface EducationContentControllerApi {
+public interface EducationContentController {
 
     @GetMapping("/content")
     ResponseEntity<ApiResponse<List<EducationContentDTO>>> getActiveContents();

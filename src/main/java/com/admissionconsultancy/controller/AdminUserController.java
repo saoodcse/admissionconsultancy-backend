@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("/api/admin/users")
-public interface AdminUserControllerApi {
+public interface AdminUserController {
 
     @PostMapping
     ResponseEntity<ApiResponse<UserResponseDTO>> createUser(@Valid @RequestBody CreateUserRequestDTO request);

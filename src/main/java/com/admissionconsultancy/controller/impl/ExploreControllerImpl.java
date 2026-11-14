@@ -1,7 +1,7 @@
 package com.admissionconsultancy.controller.impl;
 
 import com.admissionconsultancy.constants.AppCode;
-import com.admissionconsultancy.controller.ExploreControllerApi;
+import com.admissionconsultancy.controller.ExploreController;
 import com.admissionconsultancy.dto.ApiResponse;
 import com.admissionconsultancy.dto.ExploreCountryDTO;
 import com.admissionconsultancy.service.ExploreService;
@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class ExploreController implements ExploreControllerApi {
+public class ExploreControllerImpl implements ExploreController {
 
     private final ExploreService exploreService;
 

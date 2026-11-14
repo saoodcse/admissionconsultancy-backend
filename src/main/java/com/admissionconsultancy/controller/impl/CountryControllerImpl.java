@@ -1,7 +1,7 @@
 package com.admissionconsultancy.controller.impl;
 
 import com.admissionconsultancy.constants.AppCode;
-import com.admissionconsultancy.controller.CountryControllerApi; // Imported from the parent package
+import com.admissionconsultancy.controller.CountryController; // Imported from the parent package
 import com.admissionconsultancy.dto.ApiResponse;
 import com.admissionconsultancy.dto.CountryDTO;
 import com.admissionconsultancy.service.CountryService;
@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class CountryController implements CountryControllerApi {
+public class CountryControllerImpl implements CountryController {
 
     private final CountryService countryService;
 
