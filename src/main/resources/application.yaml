@@ -1,24 +1,24 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080} # Default port is 8080, or override via SERVER_PORT env variable
 
 spring:
   application:
     name: admissionconsultancy
-  datasource:
-    url: jdbc:mysql://localhost:3306/admission_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
-    username: root
-    password: root#1234
-    hikari:
-      pool-name: AdmissionHikariPool # Required to enable DB connection pool metrics
 
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update # In actual production, change this to 'validate' and use Flyway/Liquibase
+      ddl-auto: validate #Flyway handles schema, JPA only validates!
     show-sql: true # Set to true if you want to debug SQL queries
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+# Custom Database Properties injected into DatabaseConfig.java
+db:
+  url: ${DB_URL:jdbc:mysql://localhost:3306/admission_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true}
+  username: ${DB_USERNAME:root}
+  password: ${DB_PASSWORD:root#1234}
 
 # Proper Logger Configurationx
 logging:
