@@ -32,7 +32,7 @@ logging:
 # Rate Limiting Configuration
 app:
   ratelimit:
-    max-capacity: 20        # Maximum burst size (tokens a bucket can hold)
+    max-capacity: 50        # Maximum burst size (tokens a bucket can hold)
     refill-tokens: 20         # How many tokens to add every refill period
     refill-period-minutes: 1  # Time duration of the refill period in minutes
     cache-max-size: 100000    # Max unique IPs to track simultaneously in RAM
